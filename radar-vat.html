@@ -1,0 +1,486 @@
+<title>Radar VAT</title>
+
+<style>
+  :root {
+    --ink: #1E2A2A;
+    --ink-soft: #46534F;
+    --paper: #EBEEE9;
+    --paper-raised: #FFFFFF;
+    --paper-sunken: #E0E4DD;
+    --line: #CCD3C8;
+    --accent: #0E6F62;
+    --accent-strong: #0A4F46;
+    --accent-soft: #D9EAE5;
+    --amber: #92600A;
+    --amber-soft: #F3E6CC;
+    --rust: #9C3B2E;
+    --rust-soft: #F2DFDA;
+    --shadow: 0 1px 2px rgba(20, 30, 28, 0.06), 0 8px 24px -12px rgba(20, 30, 28, 0.18);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --ink: #E7ECE8;
+      --ink-soft: #A8B5AE;
+      --paper: #12181A;
+      --paper-raised: #1A2224;
+      --paper-sunken: #0D1213;
+      --line: #2B3436;
+      --accent: #4FD3BE;
+      --accent-strong: #7EE4D2;
+      --accent-soft: #16332E;
+      --amber: #E7B25C;
+      --amber-soft: #33280F;
+      --rust: #E19486;
+      --rust-soft: #351F1C;
+      --shadow: 0 1px 2px rgba(0, 0, 0, 0.4), 0 8px 24px -12px rgba(0, 0, 0, 0.6);
+    }
+  }
+
+  :root[data-theme="dark"] {
+    --ink: #E7ECE8;
+    --ink-soft: #A8B5AE;
+    --paper: #12181A;
+    --paper-raised: #1A2224;
+    --paper-sunken: #0D1213;
+    --line: #2B3436;
+    --accent: #4FD3BE;
+    --accent-strong: #7EE4D2;
+    --accent-soft: #16332E;
+    --amber: #E7B25C;
+    --amber-soft: #33280F;
+    --rust: #E19486;
+    --rust-soft: #351F1C;
+    --shadow: 0 1px 2px rgba(0, 0, 0, 0.4), 0 8px 24px -12px rgba(0, 0, 0, 0.6);
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    font-size: 16px;
+    line-height: 1.6;
+    margin: 0;
+    padding: 0 20px 96px;
+  }
+
+  h1, h2, h3 {
+    font-family: Georgia, "Iowan Old Style", "Palatino Linotype", "Times New Roman", ui-serif, serif;
+    font-weight: 600;
+    text-wrap: balance;
+    color: var(--ink);
+    margin: 0;
+  }
+
+  .wrap { max-width: 780px; margin: 0 auto; }
+
+  /* ---- Header ---- */
+  header.hero {
+    padding: 64px 0 40px;
+    border-bottom: 1px solid var(--line);
+    margin-bottom: 48px;
+  }
+  .eyebrow {
+    font-family: -apple-system, "Segoe UI", Roboto, sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+    color: var(--accent-strong);
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .eyebrow::before {
+    content: "";
+    width: 22px;
+    height: 1px;
+    background: var(--accent);
+    display: inline-block;
+  }
+  h1.title {
+    font-size: clamp(34px, 5vw, 48px);
+    line-height: 1.08;
+    letter-spacing: -0.01em;
+  }
+  .subtitle {
+    margin-top: 16px;
+    font-size: 19px;
+    color: var(--ink-soft);
+    max-width: 60ch;
+  }
+  .status-row {
+    margin-top: 28px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  .pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    font-size: 13px;
+    font-weight: 600;
+    padding: 7px 13px 7px 11px;
+    border-radius: 100px;
+    line-height: 1;
+  }
+  .pill-dot { width: 7px; height: 7px; border-radius: 50%; flex: none; }
+  .pill.amber { background: var(--amber-soft); color: var(--amber); }
+  .pill.amber .pill-dot { background: var(--amber); }
+  .pill.accent { background: var(--accent-soft); color: var(--accent-strong); }
+  .pill.accent .pill-dot { background: var(--accent); }
+  :root[data-theme="dark"] .pill.accent, @media (prefers-color-scheme: dark) { }
+
+  /* ---- Sections ---- */
+  section { margin-bottom: 56px; }
+  .kicker {
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--accent-strong);
+    margin-bottom: 10px;
+  }
+  h2.section-title { font-size: 26px; margin-bottom: 18px; }
+  p { margin: 0 0 16px; max-width: 68ch; }
+  p.lead { font-size: 18px; color: var(--ink-soft); }
+  strong { color: var(--ink); font-weight: 700; }
+
+  .callout {
+    background: var(--paper-raised);
+    border: 1px solid var(--line);
+    border-left: 3px solid var(--accent);
+    border-radius: 10px;
+    padding: 20px 22px;
+    box-shadow: var(--shadow);
+  }
+  .callout p:last-child { margin-bottom: 0; }
+  .callout.warn { border-left-color: var(--amber); }
+
+  /* ---- Pipeline steps ---- */
+  .steps { display: flex; flex-direction: column; gap: 0; margin-top: 28px; }
+  .step {
+    display: grid;
+    grid-template-columns: 40px 1fr;
+    gap: 18px;
+    padding: 20px 0;
+    border-top: 1px solid var(--line);
+    position: relative;
+  }
+  .step:first-child { border-top: none; padding-top: 0; }
+  .step-num {
+    font-family: Georgia, ui-serif, serif;
+    font-size: 22px;
+    font-variant-numeric: tabular-nums;
+    color: var(--accent);
+    font-weight: 600;
+  }
+  .step h3 { font-size: 17px; margin-bottom: 6px; font-family: -apple-system, "Segoe UI", Roboto, sans-serif; font-weight: 700; }
+  .step p { margin-bottom: 0; font-size: 15px; color: var(--ink-soft); }
+  .step .example {
+    display: inline-block;
+    margin-top: 10px;
+    font-size: 13.5px;
+    background: var(--paper-sunken);
+    border-radius: 7px;
+    padding: 8px 12px;
+    color: var(--ink-soft);
+  }
+  .step .example b { color: var(--ink); }
+
+  /* ---- Stats bar ---- */
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1px;
+    background: var(--line);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    overflow: hidden;
+    margin-top: 24px;
+  }
+  .stat {
+    background: var(--paper-raised);
+    padding: 22px 16px;
+    text-align: center;
+  }
+  .stat .num {
+    font-family: Georgia, ui-serif, serif;
+    font-size: 34px;
+    font-weight: 700;
+    color: var(--accent-strong);
+    font-variant-numeric: tabular-nums;
+    line-height: 1.1;
+  }
+  .stat .label {
+    font-size: 12.5px;
+    color: var(--ink-soft);
+    margin-top: 6px;
+  }
+
+  /* ---- Company cards ---- */
+  .companies { display: flex; flex-direction: column; gap: 10px; margin-top: 24px; }
+  .company {
+    background: var(--paper-raised);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 16px 18px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+  .company .name { font-weight: 700; font-size: 15px; }
+  .company .meta { font-size: 13px; color: var(--ink-soft); margin-top: 3px; }
+  .tier-pill {
+    font-size: 12px;
+    font-weight: 700;
+    padding: 5px 10px;
+    border-radius: 100px;
+    background: var(--amber-soft);
+    color: var(--amber);
+    white-space: nowrap;
+    flex: none;
+  }
+
+  /* ---- Tier explainer ---- */
+  .tier-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 24px; }
+  @media (max-width: 560px) { .tier-grid { grid-template-columns: 1fr; } .stats { grid-template-columns: repeat(2, 1fr); } }
+  .tier-card {
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 18px;
+    background: var(--paper-raised);
+  }
+  .tier-card .tier-name { font-weight: 700; font-size: 14px; margin-bottom: 8px; display: flex; align-items: center; gap: 8px; }
+  .tier-card .tier-name .dot { width: 9px; height: 9px; border-radius: 50%; }
+  .tier-card p { font-size: 14px; margin-bottom: 0; color: var(--ink-soft); }
+  .tier-card.now { border-color: var(--amber); background: var(--amber-soft); }
+  .tier-card.now .tier-name { color: var(--amber); }
+  .tier-card.now .dot { background: var(--amber); }
+  .tier-card.goal .tier-name { color: var(--accent-strong); }
+  .tier-card.goal .dot { background: var(--accent); }
+
+  /* ---- Code block ---- */
+  .codebox {
+    background: var(--paper-sunken);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 16px 18px;
+    overflow-x: auto;
+    margin: 14px 0 20px;
+  }
+  .codebox code {
+    font-family: "SF Mono", "Cascadia Code", Consolas, monospace;
+    font-size: 13px;
+    color: var(--ink);
+    white-space: pre;
+    display: block;
+  }
+  .codebox .comment { color: var(--ink-soft); }
+
+  .howto-step { margin-bottom: 22px; }
+  .howto-step h3 { font-size: 15.5px; font-family: -apple-system, "Segoe UI", Roboto, sans-serif; margin-bottom: 4px; }
+  .howto-step .num-badge {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 22px; height: 22px; border-radius: 50%;
+    background: var(--accent-soft); color: var(--accent-strong);
+    font-size: 12px; font-weight: 700; margin-right: 8px; font-family: -apple-system, sans-serif;
+  }
+
+  table.glossary { width: 100%; border-collapse: collapse; margin-top: 20px; }
+  table.glossary th, table.glossary td { text-align: left; padding: 10px 14px; border-bottom: 1px solid var(--line); font-size: 14px; vertical-align: top; }
+  table.glossary th { font-size: 12px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--ink-soft); font-weight: 700; }
+  table.glossary td:first-child { font-weight: 700; white-space: nowrap; }
+
+  footer {
+    margin-top: 64px;
+    padding-top: 28px;
+    border-top: 1px solid var(--line);
+    font-size: 13.5px;
+    color: var(--ink-soft);
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  a { color: var(--accent-strong); }
+
+  @media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }
+</style>
+
+<div class="wrap">
+
+<header class="hero">
+  <div class="eyebrow">Proiect de cercetare · descoperire identificatori fiscali</div>
+  <h1 class="title">Radar VAT</h1>
+  <p class="subtitle">Un instrument care încearcă să găsească, pe internet, codurile de TVA (VAT) ale companiilor din Marea Britanie pentru care nu avem încă această informație — și verifică, la fiecare pas, dacă ceea ce a găsit chiar aparține companiei corecte.</p>
+  <div class="status-row">
+    <span class="pill amber"><span class="pill-dot"></span> În așteptarea aprobării HMRC pentru verificare oficială</span>
+    <span class="pill accent"><span class="pill-dot"></span> 7 candidați reali găsiți până acum</span>
+  </div>
+</header>
+
+<section>
+  <div class="kicker">Pe scurt, în 60 de secunde</div>
+  <p class="lead">Compania are aproximativ 40.000 de furnizori. Pentru o treime dintre ei, nu se știe codul de TVA — un fel de "buletin fiscal" al firmei, folosit ca să lege facturile de firma corectă. Fără el, e ușor să confunzi două firme cu nume asemănător.</p>
+  <p>Acest proiect testează dacă acel cod poate fi găsit automat, căutând pe internet — de exemplu pe site-ul propriu al furnizorului — și verificând că informația găsită e reală și aparține exact firmei căutate, nu uneia cu nume similar. <strong>Răspunsul de până acum: da, se poate găsi, dar rar (aproximativ 1 din 20 de companii), și nimic nu e considerat "confirmat" până nu trece și printr-o verificare oficială la autoritatea fiscală britanică (HMRC)</strong> — pasul care, chiar acum, așteaptă o aprobare.</p>
+</section>
+
+<section>
+  <div class="kicker">De ce contează</div>
+  <h2 class="section-title">Problema pe care o rezolvă</h2>
+  <p>Când o companie plătește o factură, vrea să fie sigură că plătește furnizorul corect. Codul de TVA e unul dintre cele mai sigure moduri de a confirma identitatea unei firme — mai sigur decât numele, care poate fi scris în mai multe feluri ("J Smith Building Services Ltd" vs. "J. Smith Building Svcs Limited" — sunt aceeași firmă, sau două firme diferite?).</p>
+  <div class="callout">
+    <p>Nu există niciun loc public unde poți căuta "după numele firmei, dă-mi codul de TVA". HMRC face doar invers: dacă <em>ai deja</em> un cod, îți confirmă cui aparține. Deci trebuie mai întâi <strong>găsit</strong> un candidat (de obicei pe internet), abia apoi <strong>verificat</strong> oficial.</p>
+  </div>
+</section>
+
+<section>
+  <div class="kicker">Cum funcționează</div>
+  <h2 class="section-title">Călătoria unui candidat, pas cu pas</h2>
+  <p>Fiecare companie testată trece prin aceleași cinci etape. Nicio etapă nu poate fi sărită.</p>
+  <div class="steps">
+    <div class="step">
+      <div class="step-num">1</div>
+      <div>
+        <h3>Alegem o companie de testat</h3>
+        <p>Pornim de la lista oficială Companies House (registrul firmelor din UK) și alegem un eșantion reprezentativ — nu doar firme "ușoare", ci un amestec real, pe industrii și vârste diferite ale firmei.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">2</div>
+      <div>
+        <h3>Căutăm dovezi pe internet</h3>
+        <p>Căutăm site-ul oficial al firmei și verificăm dacă afișează undeva codul de TVA — de obicei în subsolul paginii, lângă numărul de înregistrare al firmei.</p>
+        <div class="example">Exemplu real: pe site-ul <b>G A Plant and Tool Hire Ltd</b> apare direct: "Registered In England No. 09460505. Vat Registration No. GB 208 0331 52."</div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">3</div>
+      <div>
+        <h3>Verificăm că e firma corectă, nu una asemănătoare</h3>
+        <p>Un nume similar nu înseamnă aceeași firmă. Comparăm numele, adresa și numărul de înregistrare găsite cu cele oficiale — dacă nu se potrivesc suficient, candidatul e respins, oricât de convingător ar părea.</p>
+        <div class="example">Exemplu real: am găsit un cod de TVA pentru "Meat and Shakes (Preston) Limited" — dar firma noastră era <b>Meat N Shake Ltd</b>, cu alt număr de înregistrare și altă adresă. Respins, deși numele semăna izbitor.</div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">4</div>
+      <div>
+        <h3>Verificăm oficial la HMRC</h3>
+        <p>Doar autoritatea fiscală britanică poate confirma definitiv că un cod e real și activ. Acesta e singurul pas pe care nu-l putem face acum — accesul e în așteptare (vezi mai jos).</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">5</div>
+      <div>
+        <h3>Abia acum contează ca "găsit"</h3>
+        <p>Un candidat devine o descoperire reală doar după ce trece de toate etapele de mai sus. Până atunci, rămâne doar un candidat promițător — nu e raportat ca rezultat final.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="kicker">Rezultate</div>
+  <h2 class="section-title">Ce am descoperit până acum</h2>
+  <div class="stats">
+    <div class="stat"><div class="num">500</div><div class="label">firme în eșantionul principal</div></div>
+    <div class="stat"><div class="num">100</div><div class="label">firme verificate manual</div></div>
+    <div class="stat"><div class="num">~160</div><div class="label">firme testate pentru căutare</div></div>
+    <div class="stat"><div class="num">7</div><div class="label">candidați reali găsiți</div></div>
+  </div>
+  <p style="margin-top:20px">Cei 7 candidați găsiți, toți cu codul de TVA confirmat direct pe site-ul propriu al firmei:</p>
+  <div class="companies">
+    <div class="company"><div><div class="name">Hills Family Ltd</div><div class="meta">Londra · potrivire exactă nume, adresă, cod firmă</div></div><span class="tier-pill">Neverificat oficial</span></div>
+    <div class="company"><div><div class="name">JTHN Limited</div><div class="meta">Colchester · cod firmă exact, adresă ușor diferită</div></div><span class="tier-pill">Neverificat oficial</span></div>
+    <div class="company"><div><div class="name">GO2 Property Services Limited</div><div class="meta">Woking · cod firmă exact, adresă ușor diferită</div></div><span class="tier-pill">Neverificat oficial</span></div>
+    <div class="company"><div><div class="name">G A Plant and Tool Hire Ltd</div><div class="meta">Swindon · potrivire perfectă pe toate criteriile</div></div><span class="tier-pill">Neverificat oficial</span></div>
+    <div class="company"><div><div class="name">TTG Portsmouth Limited</div><div class="meta">Bournemouth · potrivire perfectă pe toate criteriile</div></div><span class="tier-pill">Neverificat oficial</span></div>
+    <div class="company"><div><div class="name">Bullet Building Products Limited</div><div class="meta">Rotherham · potrivire perfectă pe toate criteriile</div></div><span class="tier-pill">Neverificat oficial</span></div>
+    <div class="company"><div><div class="name">Executours Limited</div><div class="meta">Cumbria · potrivire exactă nume, adresă, cod firmă</div></div><span class="tier-pill">Neverificat oficial</span></div>
+  </div>
+</section>
+
+<section>
+  <div class="kicker">De ce "neverificat oficial"</div>
+  <h2 class="section-title">De ce niciun rezultat nu e încă "gata"</h2>
+  <p>Sistemul folosește trei niveluri de încredere. Toți cei 7 candidați de mai sus sunt, deocamdată, blocați la cel mai jos nivel — nu pentru că dovada ar fi slabă, ci pentru că le lipsește exact acest ultim pas.</p>
+  <div class="tier-grid">
+    <div class="tier-card now">
+      <div class="tier-name"><span class="dot"></span> Nivel actual: Candidat neconfirmat</div>
+      <p>Am găsit un cod de TVA, pare să aparțină firmei corecte, dar HMRC nu l-a confirmat încă oficial. Nu se raportează ca rezultat final.</p>
+    </div>
+    <div class="tier-card goal">
+      <div class="tier-name"><span class="dot"></span> Obiectiv: Confirmat oficial</div>
+      <p>HMRC a confirmat că acel cod e real, activ, și că datele se potrivesc cu firma. Doar atunci devine o descoperire raportabilă.</p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="callout warn">
+    <div class="kicker" style="margin-bottom:8px">Blocajul actual</div>
+    <h2 class="section-title" style="font-size:20px; margin-bottom:10px">Așteptăm aprobarea HMRC</h2>
+    <p>Pentru pasul 4 (verificarea oficială), avem nevoie de acces la API-ul HMRC "Check a UK VAT Number". Am înregistrat deja o aplicație și am testat cu succes conexiunea tehnică pe mediul lor de test (Sandbox) — funcționează. Ce lipsește e <strong>accesul de producție</strong>, cel care confirmă date reale, nu date fictive de test. Cererea pentru acest acces are un termen declarat de HMRC de <strong>aproximativ 2 săptămâni</strong> pentru aprobare.</p>
+    <p style="margin-bottom:0">De îndată ce acest acces există, cei 7 candidați de mai sus pot fi verificați — practic gratuit și în câteva secunde — și cel puțin unii ar trece probabil la nivelul "Confirmat oficial".</p>
+  </div>
+</section>
+
+<section>
+  <div class="kicker">Pentru cineva tehnic</div>
+  <h2 class="section-title">Cum se rulează efectiv</h2>
+  <p>Aplicația nu are o interfață vizuală (nu e un site sau o aplicație de telefon) — e un set de scripturi Python, rulate din linia de comandă, care scriu rezultatele într-o bază de date locală (un fișier). Iată pașii, pentru cineva care ar prelua proiectul tehnic:</p>
+
+  <div class="howto-step">
+    <h3><span class="num-badge">1</span>Pregătește mediul</h3>
+    <div class="codebox"><code><span class="comment"># din folderul proiectului</span>
+python -m venv .venv
+.venv\Scripts\Activate.ps1
+pip install -e ".[dev]"</code></div>
+  </div>
+
+  <div class="howto-step">
+    <h3><span class="num-badge">2</span>Rulează testele (confirmă că totul funcționează)</h3>
+    <div class="codebox"><code>pytest <span class="comment"># ar trebui să arate: 60 passed</span></code></div>
+  </div>
+
+  <div class="howto-step">
+    <h3><span class="num-badge">3</span>Vezi rezultatele deja găsite</h3>
+    <div class="codebox"><code>sqlite3 data\vat_discovery.sqlite "SELECT * FROM vat_candidates;"</code></div>
+  </div>
+
+  <div class="howto-step">
+    <h3><span class="num-badge">4</span>Când vine accesul HMRC de producție</h3>
+    <div class="codebox"><code><span class="comment"># în fișierul .env, schimbă:</span>
+HMRC_ENVIRONMENT=production
+<span class="comment"># apoi rulează verificarea reală pe cei 7 candidați</span></code></div>
+  </div>
+
+  <p style="margin-top:8px; font-size:14px; color:var(--ink-soft)">Toate scripturile, rezultatele și explicațiile detaliate sunt în folderul proiectului: <code>README.md</code> (privire de ansamblu), <code>docs/decision.md</code> (verdictul final), <code>docs/findings.md</code> (toate observațiile, cu dovezi).</p>
+</section>
+
+<section>
+  <div class="kicker">Glosar rapid</div>
+  <table class="glossary">
+    <tr><th>Termen</th><th>Ce înseamnă, pe scurt</th></tr>
+    <tr><td>VAT</td><td>Codul de TVA al unei firme din UK — 9 cifre, de obicei precedate de "GB". Folosit pentru identificare fiscală și facturare.</td></tr>
+    <tr><td>Companies House</td><td>Registrul oficial britanic al firmelor — conține nume, adresă, status, dar niciodată codul de TVA.</td></tr>
+    <tr><td>HMRC</td><td>Autoritatea fiscală britanică — singura care poate confirma oficial dacă un cod de TVA e real și activ.</td></tr>
+    <tr><td>Candidat</td><td>Un cod de TVA găsit undeva (de obicei pe un site), care pare să aparțină firmei căutate, dar nu e încă verificat oficial.</td></tr>
+    <tr><td>Sandbox</td><td>Mediul de "testare" al HMRC — confirmă că sistemul tehnic funcționează, dar întoarce mereu date fictive, nu firme reale.</td></tr>
+  </table>
+</section>
+
+<footer>
+  <span>Radar VAT — proiect de cercetare, august 2026</span>
+  <span>Verdict curent: <strong style="color:var(--ink)">CONDITIONAL GO</strong> — vezi <code>docs/decision.md</code></span>
+</footer>
+
+</div>

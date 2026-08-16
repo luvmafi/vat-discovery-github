@@ -1,0 +1,5 @@
+CompanyName,CompanyNumber,CompanyStatus,RegAddress.AddressLine1,RegAddress.AddressLine2,RegAddress.PostTown,RegAddress.County,RegAddress.Country,RegAddress.PostCode,IncorporationDate,DissolutionDate,SICCode.SicText_1,SICCode.SicText_2,SICCode.SicText_3,SICCode.SicText_4
+EXAMPLE FIXTURE BUILDERS LTD,SC000001,Active,1 Test Street,,Testville,Testshire,United Kingdom,TE1 1ST,15/03/2018,,"41200 - Construction of residential and non-residential buildings",None Supplied,None Supplied,None Supplied
+EXAMPLE FIXTURE CONSULTING LIMITED,SC000002,Active,2 Sample Road,Unit B,Sampletown,,United Kingdom,SA2 2MP,01/01/2010,,"70229 - Management consultancy activities other than financial management","62012 - Business and domestic software development",None Supplied,None Supplied
+EXAMPLE FIXTURE DISSOLVED CO LTD,SC000003,Dissolved,3 Old Lane,,Oldtown,,United Kingdom,OL3 3DD,05/05/2005,10/10/2020,"46110 - Agents involved in the sale",None Supplied,None Supplied,None Supplied
+,SC000004,Active,4 Missing Name Way,,Nowhere,,United Kingdom,NW4 4ME,20/02/2019,,None Supplied,None Supplied,None Supplied,None Supplied

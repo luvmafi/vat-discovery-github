@@ -1,0 +1,14 @@
+sample:
+  target_size: 500
+  seed: 20260815
+  reference_date: "2026-08-01"
+http:
+  user_agent: "uk-vat-discovery-research/0.1 (contact: configure-before-live-use)"
+  requests_per_domain_per_minute: 12
+  timeout_seconds: 20
+  max_retries: 3
+  cache_enabled: true
+experiments:
+  code_version: "phase-0"
+  parser_version: "0.1.0"
+  verifier_version: "unconfigured"

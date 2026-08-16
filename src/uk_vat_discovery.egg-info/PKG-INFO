@@ -1,0 +1,11 @@
+Metadata-Version: 2.4
+Name: uk-vat-discovery
+Version: 0.1.0
+Summary: Evidence-first UK VAT identifier discovery research POC
+Requires-Python: >=3.11
+Requires-Dist: PyYAML>=6.0
+Requires-Dist: pypdf>=4.0
+Requires-Dist: requests>=2.31
+Provides-Extra: dev
+Requires-Dist: pytest>=8.0; extra == "dev"
+Requires-Dist: fpdf2>=2.7; extra == "dev"

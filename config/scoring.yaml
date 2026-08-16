@@ -1,0 +1,13 @@
+tiers:
+  high_confidence_min: 0.85
+  medium_confidence_min: 0.65
+required_for_high_confidence:
+  verification_status: VERIFIED
+  one_of: ["postcode_match", "company_number_match"]
+weights:
+  name_score: 0.35
+  address_score: 0.20
+  postcode_match: 0.15
+  domain_score: 0.10
+  company_number_match: 0.15
+  context_score: 0.05
