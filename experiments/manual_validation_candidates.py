@@ -1,8 +1,6 @@
-"""Runs any real first-party-confirmed VAT candidates found during the
-manual-validation-subset review (experiments/manual_validation_review.py)
-through the actual pipeline, using the shared helper in
-vat_discovery.entity_resolution.pipeline. One entry per batch that produced
-a real candidate; append here as later batches find more.
+"""Runs candidates from the validation review through the normal pipeline.
+
+Add a record here when a review finds VAT text on the company's own site.
 """
 from __future__ import annotations
 

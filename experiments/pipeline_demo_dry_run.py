@@ -1,17 +1,6 @@
-"""Demonstrates the full pipeline end-to-end -- extraction, normalization,
-verification, entity resolution, tiering -- against a purely fictional
-company, using the controlled TestFixtureVerifier (never HMRC, never a real
-candidate). This exists to prove the mechanism works now that every stage
-has been built, not to produce or imply any real result.
+"""Runs the full pipeline with a fake company and test verifier.
 
-Deliberately writes nothing to data/vat_discovery.sqlite: mixing demo output
-with real pilot data, even clearly labelled, is a needless risk this script
-avoids entirely by just printing its result.
-
-Real HMRC production credentials were identified and the application
-process documented (docs/decision.md) but not pursued in this project's
-timeframe -- see README for status. This script is what runs the moment a
-real VatVerifier implementation replaces TestFixtureVerifier below.
+It prints the result and does not write demo data into the local database.
 """
 from __future__ import annotations
 
@@ -25,7 +14,7 @@ from vat_discovery.extraction.html import extract_vat_candidates
 from vat_discovery.normalization.vat import validate_uk_vat_syntax
 from vat_discovery.verification.test_fixture import TestFixtureVerifier
 
-# A fictional company, invented for this demo only -- not in any real sample.
+# Fake company used only by this demo.
 FIXTURE_COMPANY = CompanyRecord(
     companies_house_number="01234567",
     raw_company_name="EXAMPLE FIXTURE BUILDERS LTD",

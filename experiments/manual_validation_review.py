@@ -1,20 +1,7 @@
-"""Records reviews of the 100-company manual-validation subset
-(data/processed/manual_validation_subset.csv, see brief section 22) into the
-`manual_reviews` table.
+"""Saves batches from the 100-company validation review.
 
-IMPORTANT LABELLING NOTE: the brief specifies independent *human* manual
-review, precisely so it can catch failure modes the automated pipeline
-cannot see (including, as it turned out, search-summary hallucination --
-see docs/findings.md Phase 2 round 3). These reviews were performed by the
-operating agent using the same web-search/fetch tools as the Phase 2 pilots,
-at the user's explicit request, not by an independent human reviewer.
-`reviewer` is recorded as `AGENT_ASSISTED_NOT_INDEPENDENT_HUMAN_REVIEW` in
-every row so this is never later misread as satisfying the brief's original
-manual-validation requirement -- it is a related but distinct check.
-
-Run in batches (`--batch-file`) since 100 rigorous per-company checks cannot
-responsibly happen in one pass; each batch is a separate, dated JSON file of
-observations.
+These reviews were agent-assisted, not independent human reviews. The label in
+the database makes that clear. Use a separate JSON file for each batch.
 """
 from __future__ import annotations
 

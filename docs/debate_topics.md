@@ -1,43 +1,51 @@
 # Required debate topics
 
-The brief requires the final README to address four specific questions directly, with evidence, not generic consulting language. This is that answer, consolidated from findings scattered across `docs/findings.md`, `research_report.md`, and `experiments/hmrc_experiment.py`.
+## 1. Could checksum-based enumeration discover VAT numbers?
 
-## 1. VAT checksum / HMRC enumeration — is it technically possible, is it economically useful?
+Technically, a checksum reduces the number of random values worth trying.
+Practically, it does not solve the real problem: mapping a valid VAT number to
+the right company. Enumeration would still require entity matching at a much
+larger scale, and the HMRC API is a gated due-diligence service rather than a
+bulk enumeration endpoint.
 
-**Technically possible in principle**: UK VAT numbers are 9 digits with a MOD-97 checksum (two documented variants — see the bug found and fixed in `normalization/vat.py`, Phase 10). A 9-digit space with a checksum constraint is enumerable; the checksum rejects roughly 97 in 98 random candidates syntactically (each of the two check digits has odds of matching by chance about 1/97), leaving a large but not astronomically large space of syntactically-valid candidates to submit for verification.
+For that reason, `experiments/hmrc_experiment.py` is deliberately dry-run only.
+It accepts a small approved set of candidates, rejects ranges, and makes no
+network requests. The project uses public evidence to find a company-specific
+candidate first, then verifies it if an authorised verifier is available.
 
-**Economically useless as a discovery strategy, independent of legality**: syntax validity says nothing about which *company* a number belongs to. Even a syntactically valid, HMRC-verified VAT number requires the same entity-resolution step as any other discovery method (`entity_resolution/scoring.py`) to become useful — you'd still need a name/address/company-number match against the target company, which enumeration does not provide any faster than search-based discovery does. Enumeration would need to check *every* company's name/address against *every* enumerated number to find matches, which is a much larger and slower search than the one this project actually ran.
+## 2. How would the data stay current?
 
-**Not attempted here — deliberately**: `experiments/hmrc_experiment.py` is a dry-run-only scaffold that explicitly rejects live requests and ranges (accepts only 1-100 pre-approved candidates, makes zero network calls). This was a Phase 0 design decision, not a limitation reached during the project. HMRC's own API documentation describes it as gated, authenticated, and intended for "trader due diligence," not bulk lookup or enumeration — building an enumeration client would mean building something explicitly against the documented purpose of the access being sought, before any credentials exist to even try. **Conclusion: technically enumerable, operationally and economically pointless, and against the terms of the only access path this project has identified.**
+- Refresh the Companies House snapshot quarterly and compare status, address,
+  and incorporation changes.
+- Re-run authoritative verification for previously verified VAT numbers on the
+  same cycle.
+- Re-check a source page sooner when a previously confirmed website becomes
+  unreachable or its evidence changes.
 
-## 2. Keeping data current — how do we detect registrations, deregistrations, changes, stale evidence?
+The POC observed one site disappearing between checks, so source freshness is
+not theoretical. VAT re-verification has not been tested yet because no record
+has reached `VERIFIED` status.
 
-This project observed one concrete instance of staleness directly: a candidate website found in one Phase 2 search round (`experiments/source_website.py`, CHURCHGATE WOKING LTD) no longer resolved when re-checked in the very same session. That is the strongest evidence in this project that website evidence decays faster than a quarterly cycle assumes for at least some fraction of sources.
+## 3. How can wrong data be detected without a full reference dataset?
 
-The schema (`sql/schema.sql`) already separates `discovered_at` from `verified_at` in `vat_verifications`, and `websites.status` supports re-classification (`CONFIRMED` → `REJECTED`) without deleting history — this was designed in Phase 0 specifically to make staleness measurable later, and Phase 10 is the first time real data exists to actually measure it against. Concretely, for production:
+The project uses several independent checks rather than a single similarity
+score: company number, postcode, address, domain, source context, and an
+authoritative verifier where available. The POC caught name collisions, claims
+that appeared only in search summaries, and address differences that were valid
+because the company number matched.
 
-- **Company-level changes** (dissolution, status change, address change) are Companies House's own responsibility to publish; a quarterly re-diff against a fresh snapshot (the same ingestion module already built) catches these cheaply, since it's the same operation already run once in Phase 1.
-- **VAT-level changes** (deregistration) require re-running the verifier against previously-VERIFIED numbers — impossible to test in this project since zero numbers have ever reached VERIFIED status (no HMRC credentials). This is a real gap this project cannot close, not one glossed over.
-- **Web-evidence-level changes** (site goes down, VAT text removed/changed) are the one staleness mode this project *did* observe directly. An event-driven re-check on "a CONFIRMED website becomes unreachable" is cheap to implement (the website-fetch step already exists) and is justified by real, not hypothetical, evidence.
+This does not produce a population-wide precision figure. It does show that
+direct source retrieval and multiple entity signals catch the errors seen in the
+pilot. Production should measure the share of leads rejected after source fetch
+and retain those cases as regression fixtures.
 
-## 3. Detecting wrong data at scale — without a complete reference dataset
+## 4. Which sources are suitable for commercial use?
 
-This project found wrong-and-nearly-wrong data four distinct ways, each suggesting a different detection mechanism, all backed by real cases from this session rather than hypotheticals:
-
-1. **Source disagreement / wrong-entity name collisions** (KNOTAGAIN INTERNATIONAL LTD vs. an unrelated South African retailer; MEAT N SHAKE LTD vs. the differently-numbered MEAT AND SHAKES (PRESTON) LIMITED) — caught by requiring company-number or postcode corroboration, never name similarity alone (`config/scoring.yaml`'s `required_for_high_confidence` gate exists specifically because of this failure mode).
-2. **Tool/summary hallucination** (AQUAWASH LIMITED, FIREBIRD MUSIC LIMITED, BRISTOL ENERGY & TECHNOLOGY SERVICES — 3 of roughly 10 total VAT claims investigated, ~30-40%) — caught only by independently re-fetching and reading the primary source for every single claim before recording it. At scale, this means a production `SearchProvider` adapter must return raw snippets for extraction (`extraction/html.py` already does deterministic regex extraction on real text), never an LLM-summarized description of a page, and any LLM-assisted step in the pipeline needs its claims independently re-verifiable against a fetched, hashed document (`documents.content_hash` already exists for this).
-3. **Address-vs-registered-office mismatches that are still correct** (JTHN LIMITED, GO2 PROPERTY SERVICES LIMITED — real VAT numbers whose website address differs from the Companies House registered address) — a reminder that over-strict matching produces *false negatives*, not just the false positives in (1). The scoring model's `required_for_high_confidence: one_of [postcode_match, company_number_match]` design exists to allow exactly this case through without requiring perfect address agreement.
-4. **Checksum-validator bugs that reject real data** (the 9755-variant sign error, Phase 10) — a reminder that "wrong data" includes the pipeline's own code being wrong, not just bad external evidence. The fix here came from real candidates contradicting the code, which argues for keeping a small, growing set of confirmed-real VAT numbers as a permanent regression fixture (now started in `tests/test_normalization.py`) rather than trusting synthetic test cases alone.
-
-No complete ground-truth dataset exists to compute a true false-positive rate against the full population. What this project can report is **observed** precision on the cases it actually investigated: 6 of ~10 total VAT-number claims held up under independent verification; the other ~4 were caught before being recorded, not after. That ratio, not a population-level "precision," is the honest number available today.
-
-## 4. Product suitability of sources — which would we refuse to use commercially, and why?
-
-| Source | Commercial suitability | Reason |
-|---|---|---|
-| Companies House bulk snapshot | **Usable, with one open item** | Free, statutory public information; Companies House has stated (informally, on their own forum) no reuse restriction, but no written licence grant was found — confirm in writing before commercial use (`docs/methodology.md`). |
-| Company websites (first-party) | **Usable** | This is where all 6 real VAT candidates in this project came from. Standard web access, no terms-of-service concern beyond normal robots.txt/rate-limit courtesy (not yet exercised at scale in this POC). |
-| Open web search (via a real `SearchProvider`, not LLM summaries) | **Usable, with the caveat in (3) above** | Must return raw results for independent extraction, not summaries, given the hallucination rate this project observed when summaries were the only option available. |
-| HMRC Check a UK VAT Number API | **Conditionally usable, currently blocked** | Documented as free once credentialed, but the stated purpose ("trader due diligence") and gated access mean this needs an explicit onboarding/compliance step before commercial use — not refused, but not yet available. |
-| filetype:pdf open web search | **Not demonstrated useful** | 0/8 produced any company-specific document at all in this project's only test (`experiments/source_pdf.py`); no commercial-suitability judgment can be made on a source with zero observed signal, only a recommendation to test differently before spending more on it. |
-| Third-party VAT-lookup aggregator sites (vat-search.co.uk and similar, seen repeatedly in search results throughout this project) | **Refuse as a primary source** | Never used as evidence in this project specifically because provenance is unclear (are they scraped, self-reported, or something else?), freshness is unknown, and at least one investigated claim traceable to this kind of source (TGK FOODS LTD, Phase 2 round 3) could not be independently confirmed and was rejected. Could be a *secondary* corroboration signal, never a sole source. |
+| Source | Position |
+|---|---|
+| Companies House bulk data | Suitable as the identity backbone, subject to confirming reuse terms. |
+| First-party company websites | Suitable for discovery when normal source terms and throttling are respected. |
+| Raw search-provider results | Suitable as leads if every claim is independently fetched. |
+| HMRC API | Suitable once onboarding and production access are approved. |
+| Open-web PDF search | Not shown to be useful in this POC. |
+| Third-party VAT directories | Do not use as a primary source; their provenance and freshness are unclear. |

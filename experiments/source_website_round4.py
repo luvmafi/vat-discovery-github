@@ -1,8 +1,6 @@
-"""Round 4: extends the website-discovery pilot with 30 more companies drawn
-from the untested remainder of the 500-company sample (deterministic,
-evenly spaced through the untested pool), pushing total distinct companies
-piloted across this project past 160. Same disambiguated-query methodology
-as rounds 2-3 and Phase 10.
+"""Fourth website-search round with 30 more companies from the sample.
+
+It uses the same town-and-sector query style as the previous rounds.
 """
 from __future__ import annotations
 

@@ -1,15 +1,7 @@
-"""Records the Phase-4 pilot: public-PDF discovery (search query
-`"<company name>" filetype:pdf VAT`) on the same n=8 stratum-spread subset
-used in `source_website.py`, for direct comparability.
+"""Records a small PDF search test for the same eight companies as round 1.
 
-Same acquisition-method caveat as source_website.py: no credentialed search
-API exists yet, so this used the operating agent's own web-search tool
-directly (ACQUISITION_METHOD below), not an automated SearchProvider run.
-
-Unlike source_website.py, no candidate PDF was found for any company in this
-pilot, so `src/vat_discovery/extraction/pdf.py` was never exercised against a
-real downloaded document here -- it remains unit-tested only (see
-tests/test_extraction_pdf.py) pending a pilot that actually surfaces a PDF.
+The search was done manually because there is no configured search API. No
+company PDF was found, so the PDF parser was only tested with test fixtures.
 """
 from __future__ import annotations
 

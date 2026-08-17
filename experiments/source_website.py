@@ -1,16 +1,8 @@
-"""Records the Phase-2 pilot: company-website discovery + VAT-signal check on a
-small (n=8), stratum-spread subset of the 500-company sample.
+"""First website-search pilot for eight companies from the main sample.
 
-Method note: no search-API credentials exist yet (see .env.example / README),
-so `discovery.base.SearchProvider` has no live implementation. This pilot used
-the operating agent's own web-search and page-fetch tools as a documented,
-manual stand-in for that adapter — labelled ACQUISITION_METHOD below so it is
-never confused with an automated, reproducible SearchProvider run. A real
-adapter still needs to be built once credentials are available; this pilot
-only establishes whether the underlying signal is there to justify building it.
-
-Every observation here is a real result from a real search/fetch performed
-during this session on 2026-08-15, not a simulation.
+Search and page checks were done manually. This is not a run of the future
+`SearchProvider` adapter; it is just a small check of whether websites contain
+useful VAT evidence.
 """
 from __future__ import annotations
 
@@ -22,10 +14,7 @@ from pathlib import Path
 ACQUISITION_METHOD = "AGENT_MEDIATED_SEARCH_AND_FETCH"
 EXPERIMENT_TIMESTAMP = "2026-08-15T19:45:00+00:00"
 
-# One row per piloted company. `website_status` follows the schema's CHECK
-# constraint (CONFIRMED/PROBABLE/AMBIGUOUS/REJECTED); `failure_reason` uses
-# the project's no-VAT/failure taxonomy. `evidence_url` is the exact URL
-# fetched or searched, kept for provenance even on a negative result.
+# One result per company. Keep the URL even when the search found nothing.
 OBSERVATIONS = [
     {
         "companies_house_number": "SL008598",

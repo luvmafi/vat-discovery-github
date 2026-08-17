@@ -1,4 +1,4 @@
-"""Controlled economics experiment scaffold: dry-run only, no candidate generation or network calls."""
+"""Small dry-run for an HMRC check. It does not make network calls."""
 from __future__ import annotations
 
 import argparse

@@ -1,22 +1,9 @@
-"""Phase-2 extended pilot (round 3): n=28 new companies (disambiguated
-town+sector query), plus reuse of the 2 overlapping companies already tested
-in round 1/2 (CADWELL CORPORATION L.P., MEAT N SHAKE LTD -- not re-queried).
-Combined with rounds 1-2, this brings total distinct companies piloted for
-website/VAT discovery to 36, comfortably past the planned n=25-30 extension.
+"""Third website-search round with 28 new companies.
 
-Two real, first-party-confirmed VAT candidates were found this round:
-HILLS FAMILY LTD and JTHN LIMITED. Both are run through the actual built
-pipeline (extraction -> normalization/syntax -> entity resolution) below,
-not hand-computed, and inserted into the database with full provenance.
-Neither is called "verified": no HMRC credentials exist, so
-verification_status is honestly recorded as UNAVAILABLE, which by design
-caps both at TIER_3 regardless of how strong the contextual evidence is.
-
-One claimed VAT number (for AQUAWASH LIMITED) was reported by the search
-tool's summary but was NOT present when the cited source page was fetched
-directly -- a distinct and important failure mode (search-summary
-hallucination) documented separately in docs/findings.md, not merged as
-evidence.
+Two candidates were found on company sites and go through the same extraction
+and matching code as everything else. They stay at TIER_3 because there is no
+HMRC production check. An AQUAWASH claim from a search summary was not on the
+actual page, so it was not saved as evidence.
 """
 from __future__ import annotations
 
@@ -34,9 +21,7 @@ from vat_discovery.normalization.vat import validate_uk_vat_syntax
 ACQUISITION_METHOD = "AGENT_MEDIATED_SEARCH_ROUND_3"
 EXPERIMENT_TIMESTAMP = "2026-08-16T11:00:00+00:00"
 
-# Companies with no confirmed website/VAT evidence this round (single-line
-# outcome per company; full per-query notes would repeat the same shape as
-# rounds 1-2 and add little).
+# Negative results for this round. The earlier rounds have fuller notes.
 NEGATIVE_OBSERVATIONS = [
     ("06852397", "LOCUS SOLUS LIMITED", "NO_WEBSITE_DISCOVERED"),
     ("15165211", "CODATA LTD", "NO_WEBSITE_DISCOVERED"),
@@ -66,7 +51,7 @@ NEGATIVE_OBSERVATIONS = [
     ("16825167", "BRISTOLMEATS LIMITED", "NO_WEBSITE_DISCOVERED"),
 ]
 
-# Two real, first-party-confirmed candidates, fed through the actual pipeline.
+# Candidates found on their own sites. Run them through the usual pipeline.
 POSITIVE_CANDIDATES = [
     {
         "companies_house_number": "14228579",

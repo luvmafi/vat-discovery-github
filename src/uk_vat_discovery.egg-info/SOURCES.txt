@@ -31,12 +31,14 @@ src/vat_discovery/sampling/__init__.py
 src/vat_discovery/sampling/manual_validation_subset.py
 src/vat_discovery/sampling/stratify.py
 src/vat_discovery/verification/__init__.py
+src/vat_discovery/verification/hmrc_api.py
 src/vat_discovery/verification/test_fixture.py
 tests/test_conflicts.py
 tests/test_economics.py
 tests/test_entity_resolution.py
 tests/test_extraction.py
 tests/test_extraction_pdf.py
+tests/test_hmrc_api.py
 tests/test_ingestion.py
 tests/test_manual_validation_subset.py
 tests/test_normalization.py

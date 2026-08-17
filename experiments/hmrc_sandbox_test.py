@@ -1,15 +1,7 @@
-"""Real network call to HMRC's Sandbox "Check a UK VAT Number" API v2, using
-one of HMRC's own published test VRNs (from their public GitHub test-data
-list, not invented here). This is the first live call to HMRC in this
-project.
+"""Checks that the HMRC Sandbox connection works.
 
-CRITICAL: Sandbox returns HMRC's own mock/test data only -- never real
-company data, regardless of which VRN is queried. This script exists to
-prove the OAuth + HTTP integration in hmrc_api.HmrcVatVerifier actually
-works against a real HMRC server, not to verify any real candidate. Every
-one of this project's 6 real candidates remains unverified until production
-credentials exist (see docs/decision.md); this script must never be pointed
-at them while HMRC_ENVIRONMENT=sandbox.
+It uses one of HMRC's published test numbers, not a project candidate. Sandbox
+only returns test data, so this does not verify a real company.
 """
 from __future__ import annotations
 
@@ -18,7 +10,7 @@ from pathlib import Path
 
 from vat_discovery.verification.hmrc_api import HmrcVatVerifier
 
-# From HMRC's own sandbox test-data file:
+# Test number from HMRC's Sandbox data:
 # https://github.com/hmrc/vat-registered-companies-api/blob/main/public/api/conf/2.0/test-data/vrn.csv
 HMRC_PUBLISHED_TEST_VRN = "553557881"
 

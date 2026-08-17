@@ -1,11 +1,7 @@
-"""Phase-2 retest: same 8 companies as source_website.py, but with a
-disambiguated query per company (town + sector keyword drawn from the real
-Companies House record, e.g. "CEUTICA" Swindon pharmaceutical manufacturing
-"VAT number") instead of the original single generic "official website"
-query. Tests whether the Phase-2 NO-GO was about the source or the query.
+"""Second website-search pass for the same eight companies.
 
-Same ACQUISITION_METHOD caveat as source_website.py: agent-mediated search,
-not a live SearchProvider adapter run (no credentials configured).
+This version adds a town and sector term to each query. It was still done by
+hand, not through a configured search provider.
 """
 from __future__ import annotations
 
