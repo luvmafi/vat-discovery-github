@@ -1,9 +1,10 @@
 .env
 .venv/
+.claude
 __pycache__/
 .pytest_cache/
 *.py[cod]
-data/raw/*
+data/raw/* 
 !data/raw/.gitkeep
 data/intermediate/*
 !data/intermediate/.gitkeep
