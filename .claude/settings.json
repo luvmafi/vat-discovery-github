@@ -1,7 +1,0 @@
-{
-  "permissions": {
-    "allow": [
-      "WebFetch(domain:find-and-update.company-information.service.gov.uk)"
-    ]
-  }
-}
